@@ -1,0 +1,31 @@
+import json
+from match_json_cv_to_job import match
+from flask import Flask, request, jsonify
+import numpy as np
+
+app = Flask(__name__)
+
+def convert(o):
+    if isinstance(o, (np.float32, np.float64)):
+        return float(o)
+    if isinstance(o, (np.int32, np.int64)):
+        return int(o)
+    return str(o)
+
+@app.route("/match", methods=["POST"])
+def match_cv():
+    try:
+        data = request.get_json()
+        cv_json = json.dumps(data.get("cv"))  # Expecting dict
+        job_description = data.get("job_description")  # Expecting string
+
+        if not cv_json or not job_description:
+            return jsonify({"error": "Missing 'cv' JSON or 'job_description' string"}), 400
+
+        result = match(cv_json, job_description)
+        return jsonify(json.loads(json.dumps(result, default=convert)))
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+if __name__ == "__main__":
+    app.run(debug=True, port=5000)
