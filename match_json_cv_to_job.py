@@ -51,7 +51,7 @@ def match(cv_json_str: str, job_description_text: str) -> dict:
             "match_percentage": score or 0.0,
             "recommended": score >= 75 if score is not None else False,
             "job_title_matched": explanation.get("job_title-match", False),
-            "matched_skills": explanation.get("matched_skills", []),
+            "matched_skills": explanation.get("matched_skill", []),
             "missing_skills": explanation.get("missing_skills", []),
             "experience_required": job_exp if job_exp else None,
             "cv_contains_experience": cv_exp if cv_exp else None,
